@@ -12,11 +12,13 @@ class SocialGraph:
         self.last_id = 0
         self.users = {}
         self.friendships = {}
+        self.addcount = 0
 
     def add_friendship(self, user_id, friend_id):
         """
         Creates a bi-directional friendship
         """
+        self.addcount += 1
         if user_id == friend_id:
             print("WARNING: You cannot be friends with yourself")
         elif (
@@ -97,21 +99,27 @@ class SocialGraph:
         qq = Queue()
         qq.enqueue([user_id])
 
+        extended_size = 0
         while qq.size() > 0:
             path = qq.dequeue()
             if path[-1] not in visited:
+                if len(path) > 2:
+                    extended_size += 1
                 visited[path[-1]] = path
 
                 for friend in self.friendships[path[-1]]:
                     new_path = list(path)
                     new_path.append(friend)
                     qq.enqueue(new_path)
+
+        print(f"Extended size: {extended_size}")
         return visited
 
 
 if __name__ == "__main__":
     sg = SocialGraph()
-    sg.populate_graph(10, 2)
-    print(sg.friendships)
+    sg.populate_graph(1000, 5)
+    # print(sg.addcount)
+    # print(sg.friendships)
     connections = sg.get_all_social_paths(1)
     print(connections)
